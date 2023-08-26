@@ -1,4 +1,4 @@
-TO run dockerized just use 
+To run dockerized just use 
 
 
 docker-compose run app-service

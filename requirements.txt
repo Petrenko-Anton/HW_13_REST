@@ -48,3 +48,13 @@ starlette==0.27.0 ; python_version >= "3.11" and python_version < "4.0"
 typing-extensions==4.7.1 ; python_version >= "3.11" and python_version < "4.0"
 urllib3==1.26.16 ; python_version >= "3.11" and python_version < "4.0"
 uvicorn==0.23.2 ; python_version >= "3.11" and python_version < "4.0"
+
+fastapi~=0.101.0
+SQLAlchemy~=2.0.19
+cloudinary~=1.34.0
+redis~=4.6.0
+passlib~=1.7.4
+pydantic~=2.1.1
+libgravatar~=1.0.4
+uvicorn~=0.23.2
+alembic~=1.11.2

@@ -17,6 +17,22 @@ security = HTTPBearer()
 
 @router.post("/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def signup(body: UserModel, background_tasks: BackgroundTasks, request: Request, db: Session = Depends(get_db)):
+    """
+    Router to signup a new user and create him in database, sending him confirmation email in the background.
+
+    :param body: pydantic schema validating username, email and password.
+    :type body: UserModel
+    :param background_tasks: the instance of of fastapi class 'BackgroundTasks' which is used to start confirmation
+    email sending in the background
+    :type background_tasks: BackgroundTasks
+    :param request: An instance of the fastapi class `Request`, representing the incoming HTTP request. It contains
+    information about the current request, including the URL
+    :type request: Request
+    :param db: SQLAlchemy database session obtained from the `get_db` dependency.
+    :type db: Session
+    :return: Returns a dictionary (JSON object) containing information about the new user and a success message.
+    :rtype: dict
+    """
     exist_user = await repo_users.get_user_by_email(body.email, db)
     if exist_user:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Account already exists")
@@ -28,6 +44,16 @@ async def signup(body: UserModel, background_tasks: BackgroundTasks, request: Re
 
 @router.post("/login", response_model=TokenModel)
 async def login(body: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    """
+    Log in a user and generate access and refresh tokens.
+
+    :param body: OAuth2 password request form containing the username (email) and password.
+    :type body: OAuth2PasswordRequestForm
+    :param db: SQLAlchemy database session obtained from the `get_db` dependency.
+    :type db: Session
+    :return: Returns a dictionary (JSON object) containing the access token, refresh token, and token type.
+    :rtype: dict
+    """
     user = await repo_users.get_user_by_email(body.username, db)
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email")
@@ -44,6 +70,16 @@ async def login(body: OAuth2PasswordRequestForm = Depends(), db: Session = Depen
 
 @router.get('/refresh_token', response_model=TokenModel)
 async def refresh_token(credentials: HTTPAuthorizationCredentials = Security(security), db: Session = Depends(get_db)):
+    """
+    Refresh the access token using the provided refresh token.
+
+    :param credentials: HTTP Authorization credentials containing the refresh token.
+    :type credentials: HTTPAuthorizationCredentials
+    :param db: SQLAlchemy database session obtained from the `get_db` dependency.
+    :type db: Session
+    :return: Returns a dictionary (JSON object) containing the new access token, refresh token, and token type.
+    :rtype: dict
+    """
     token = credentials.credentials
     email = await auth_service.decode_refresh_token(token)
     user = await repo_users.get_user_by_email(email, db)
@@ -59,6 +95,16 @@ async def refresh_token(credentials: HTTPAuthorizationCredentials = Security(sec
 
 @router.get('/confirmed_email/{token}')
 async def confirmed_email(token: str, db: Session = Depends(get_db)):
+    """
+    Confirm a user's email using the provided token.
+
+    :param token: Token sent to the user's email for confirmation.
+    :type token: str
+    :param db: SQLAlchemy database session obtained from the `get_db` dependency.
+    :type db: Session
+    :return: Returns a message (JSON object) indicating the result of email confirmation.
+    :rtype: dict
+    """
     email = await auth_service.get_email_from_token(token)
     user = await repo_users.get_user_by_email(email, db)
     if user is None:
@@ -72,6 +118,20 @@ async def confirmed_email(token: str, db: Session = Depends(get_db)):
 @router.post('/request_email')
 async def request_email(body: RequestEmail, background_tasks: BackgroundTasks, request: Request,
                         db: Session = Depends(get_db)):
+    """
+    Send a confirmation email to the user.
+
+    :param body: Request body containing the user's email.
+    :type body: RequestEmail
+    :param background_tasks: Object of the fastapi class BackgroundTasks used to start email sending in the background.
+    :type background_tasks: BackgroundTasks
+    :param request: An instance of the fastapi class `Request` representing the incoming HTTP request.
+    :type request: Request
+    :param db: SQLAlchemy database session obtained from the `get_db` dependency.
+    :type db: Session
+    :return: Returns a message (JSON object) indicating the result of email sending.
+    :rtype: dict
+    """
     user = await repo_users.get_user_by_email(body.email, db)
 
     if user.confirmed:

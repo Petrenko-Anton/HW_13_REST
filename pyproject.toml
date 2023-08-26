@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "HW_11"
+name = "HW_14"
 version = "0.1.0"
-description = ""
+description = "REST API for contacts with tests and autodocs"
 authors = ["Nton118 <114150459+Nton118@users.noreply.github.com>"]
 readme = "README.md"
 
@@ -25,6 +25,9 @@ fastapi-mail = "^1.4.1"
 fastapi-limiter = "^0.1.5"
 cloudinary = "^1.34.0"
 pydantic-settings = "^2.0.3"
+
+[tool.poetry.group.dev.dependencies]
+sphinx = "^7.2.3"
 
 [build-system]
 requires = ["poetry-core"]

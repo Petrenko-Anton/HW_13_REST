@@ -15,12 +15,32 @@ router = APIRouter(prefix="/users", tags=["users"])
 
 @router.get("/me/", response_model=UserDb)
 async def read_users_me(current_user: User = Depends(auth_service.get_current_user)):
+    """
+    Get the current user's information.
+
+    :param current_user: User instance representing the authenticated user.
+    :type current_user: User
+    :return: User information.
+    :rtype: UserDb
+    """
     return current_user
 
 
 @router.patch('/avatar', response_model=UserDb)
 async def update_avatar_user(file: UploadFile = File(), current_user: User = Depends(auth_service.get_current_user),
                              db: Session = Depends(get_db)):
+    """
+    Update the user's avatar using Cloudinary API.
+
+    :param file: Uploaded avatar image file.
+    :type file: UploadFile
+    :param current_user: User instance representing the authenticated user.
+    :type current_user: User
+    :param db: SQLAlchemy database session obtained from the `get_db` dependency.
+    :type db: Session
+    :return: User information with updated avatar.
+    :rtype: UserDb
+    """
     cloudinary.config(
         cloud_name=settings.cloudinary_name,
         api_key=settings.cloudinary_api_key,
