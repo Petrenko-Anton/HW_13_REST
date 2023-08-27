@@ -1,8 +1,7 @@
 from typing import List
-from datetime import datetime, timedelta
+from datetime import date, timedelta
 from sqlalchemy.orm import Session
 from sqlalchemy import or_, and_
-
 
 from src.database.models import Contact, User
 from src.schemas import ContactModel, ContactUpdate
@@ -18,7 +17,7 @@ async def seven_days(user: User, db: Session) -> List[Contact]:
     :return: A list of contacts.
     :rtype: List[contact]
     """
-    today = datetime.today()
+    today = date.today()
     cur_year = today.year
     week_after = today + timedelta(days=7)
     contacts = db.query(Contact).filter(Contact.user_id == user.id).all()
@@ -78,31 +77,29 @@ async def find_contact(search_string: str, user: User, db: Session) -> Contact:
     """
     return db.query(Contact).filter(and_(Contact.user_id == user.id,
                                          or_(Contact.name.startswith(search_string),
-                                             search_string in Contact.name,
                                              Contact.name.endswith(search_string),
                                              Contact.name == search_string,
                                              Contact.email.startswith(search_string),
-                                             search_string in Contact.email,
                                              Contact.email.endswith(search_string),
                                              Contact.email == search_string,
                                              Contact.last_name.startswith(search_string),
-                                             search_string in Contact.last_name,
                                              Contact.last_name.endswith(search_string),
                                              Contact.last_name == search_string))).one_or_none()
 
 
 async def create_contact(body: ContactModel, user: User, db: Session) -> Contact:
-    """
-    Removes a single contact with the specified ID for a specific user.
 
-    :param contact_id: The ID of the contact to remove.
-    :type contact_id: int
-    :param user: The user to remove the contact for.
+    """
+    The create_contact function creates a new contact in the database.
+
+    :param body: Get the data from the request body
+    :type body: ContactModel
+    :param user: The user to create the contact for.
     :type user: User
     :param db: The database session.
     :type db: Session
-    :return: The removed note, or None if it does not exist.
-    :rtype: Contact | None
+    :return: A contact object
+    :rtype: Contact
     """
     contact = Contact(name=body.name, last_name=body.last_name, phone=body.phone, email=body.email,
                       birthday=body.birthday, description=body.description, user_id=user.id)

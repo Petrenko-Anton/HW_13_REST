@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from typing import Optional
 from pydantic import BaseModel, Field, EmailStr
 from pydantic_extra_types.phone_numbers import PhoneNumber
@@ -9,7 +9,7 @@ class ContactModel(BaseModel):
     last_name: str = Field(min_length=3, max_length=20)
     phone: PhoneNumber | None
     email: Optional[EmailStr]
-    birthday: Optional[datetime]
+    birthday: Optional[date]
     description: Optional[str] = Field(max_length=500)
 
 
@@ -22,7 +22,7 @@ class ContactUpdate(BaseModel):
     last_name: Optional[str] = None
     phone: Optional[PhoneNumber] = None
     email: Optional[EmailStr] = None
-    birthday: Optional[datetime] = None
+    birthday: Optional[date] = None
     description: Optional[str] = None
 
     class Config:
