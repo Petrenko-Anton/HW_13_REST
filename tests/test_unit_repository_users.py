@@ -33,7 +33,7 @@ class TestUsers(unittest.IsolatedAsyncioTestCase):
         self.token = "test token"
 
 
-    async def test_create_user(self):
+    async def test_01_create_user(self):
         body = UserModel(username="Andriy", email="andriy@gmail.com", password="test r 1")
         result = await create_user(body=body, db=self.session)
         self.assertEqual(result.username, body.username)
@@ -41,30 +41,29 @@ class TestUsers(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result.password, body.password)
         self.assertTrue(hasattr(result, "id"))
 
-    async def test_update_token(self):
-        await update_token(user=self.test_user, token=self.token, db=self.session)
+    async def test_02_update_token(self):
         sq = select(User).filter_by(email=self.test_user.email)
         result = self.session.execute(sq)
         user = result.scalar_one_or_none()
-        new_token = user.refresh_token
-        self.assertEqual(new_token, self.token)
+        await update_token(user=user, token=self.token, db=self.session)
+        self.assertEqual(user.refresh_token, self.token)
 
-    async def test_get_user_by_email_found(self):
+    async def test_03_get_user_by_email_found(self):
         result = await get_user_by_email(email=self.test_user.email, db=self.session)
         self.compare_user_attrs(result, self.test_user)
 
-    async def test_get_user_by_email_not_found(self):
+    async def test_04_get_user_by_email_not_found(self):
         result = await get_user_by_email(email="example@example.com", db=self.session)
         self.assertIsNone(result)
 
-    async def test_confirmed_email(self):
+    async def test_05_confirmed_email(self):
         await confirmed_email(email=self.test_user.email, db=self.session)
         sq = select(User).filter_by(email=self.test_user.email)
         result = self.session.execute(sq)
         user = result.scalar_one_or_none()
         self.assertEqual(user.confirmed, True)
 
-    async def test_update_avatar(self):
+    async def test_06_update_avatar(self):
         result = await update_avatar(email=self.test_user.email, url="http:/test.com/avatar", db=self.session)
         self.assertEqual(result.avatar, "http:/test.com/avatar")
 
@@ -77,16 +76,9 @@ class TestUsers(unittest.IsolatedAsyncioTestCase):
         engine = create_engine('sqlite:///./test.db')
         DBSession = sessionmaker(autocommit=False, autoflush=False, bind=engine)
         session = DBSession()
-        # Base.metadata.drop_all(bind=session.bind)
+        Base.metadata.drop_all(bind=session.bind)
         # тут закоментовано щоб можна було перевірити роботу тестів в базі SQLite, але для повторного запуску тестів
         # треба буде чистити таблицю в базі вручну
 
 if __name__ == '__main__':
-    suite = unittest.TestSuite()
-    suite.addTest(TestUsers('test_create_user'))
-    suite.addTest(TestUsers('test_update_token'))
-    suite.addTest(TestUsers('test_get_user_by_email_found'))
-    suite.addTest(TestUsers('test_get_user_by_email_not_found'))
-    suite.addTest(TestUsers('test_confirmed_email'))
-    suite.addTest(TestUsers('test_update_avatar'))
-    unittest.TextTestRunner().run(suite)
+    unittest.main()
