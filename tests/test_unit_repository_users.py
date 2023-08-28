@@ -25,7 +25,7 @@ class TestUsers(unittest.IsolatedAsyncioTestCase):
     test_user = User(username="Andriy", email="andriy@gmail.com", password="test r 1")
 
     def setUp(self):
-        engine = create_engine('sqlite:///./test.db')
+        engine = create_engine('sqlite:///../test.db')
         DBSession = sessionmaker(autocommit=False, autoflush=False, bind=engine)
         session = DBSession()
         Base.metadata.create_all(bind=engine)
@@ -73,7 +73,7 @@ class TestUsers(unittest.IsolatedAsyncioTestCase):
 
     @classmethod
     def tearDownClass(cls):
-        engine = create_engine('sqlite:///./test.db')
+        engine = create_engine('sqlite:///../test.db')
         DBSession = sessionmaker(autocommit=False, autoflush=False, bind=engine)
         session = DBSession()
         Base.metadata.drop_all(bind=session.bind)

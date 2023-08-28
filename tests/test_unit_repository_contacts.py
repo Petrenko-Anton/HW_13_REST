@@ -40,7 +40,7 @@ class TestContacts(unittest.IsolatedAsyncioTestCase):
                            birthday=datetime.date(year=1962, month=5, day=12), description="test contact 1")
 
     def setUp(self):
-        engine = create_engine('sqlite:///./test.db')
+        engine = create_engine('sqlite:///../test.db')
         DBSession = sessionmaker(autocommit=False, autoflush=False, bind=engine)
         session = DBSession()
         Base.metadata.create_all(bind=engine)
@@ -145,7 +145,7 @@ class TestContacts(unittest.IsolatedAsyncioTestCase):
 
     @classmethod
     def tearDownClass(cls):
-        engine = create_engine('sqlite:///./test.db')
+        engine = create_engine('sqlite:///../test.db')
         DBSession = sessionmaker(autocommit=False, autoflush=False, bind=engine)
         session = DBSession()
         Base.metadata.drop_all(bind=session.bind)
