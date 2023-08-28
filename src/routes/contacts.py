@@ -13,8 +13,9 @@ from src.services.auth import auth_service
 router = APIRouter(prefix='/contacts', tags=["contacts"])
 
 
-@router.get("/", response_model=List[ContactResponse], description='No more than 10 requests per minute',
-            dependencies=[Depends(RateLimiter(times=10, seconds=60))])
+# @router.get("/", response_model=List[ContactResponse], description='No more than 10 requests per minute',
+#             dependencies=[Depends(RateLimiter(times=10, seconds=60))])
+@router.get("/", response_model=List[ContactResponse])
 async def read_contacts(skip: int = 0, limit: int = 100, db: Session = Depends(get_db),
                         current_user: User = Depends(auth_service.get_current_user)):
     """

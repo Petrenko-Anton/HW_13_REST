@@ -148,7 +148,7 @@ class TestContacts(unittest.IsolatedAsyncioTestCase):
         engine = create_engine('sqlite:///./test.db')
         DBSession = sessionmaker(autocommit=False, autoflush=False, bind=engine)
         session = DBSession()
-        # Base.metadata.drop_all(bind=session.bind)
+        Base.metadata.drop_all(bind=session.bind)
         # тут закоментовано щоб можна було перевірити роботу тестів в базі SQLite, але для повторного запуску тестів
         # треба буде чистити таблицю в базі вручну
 

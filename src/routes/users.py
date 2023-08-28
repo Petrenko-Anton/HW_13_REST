@@ -48,8 +48,8 @@ async def update_avatar_user(file: UploadFile = File(), current_user: User = Dep
         secure=True
     )
 
-    r = cloudinary.uploader.upload(file.file, public_id=f'NotesApp/{current_user.username}', overwrite=True)
-    src_url = cloudinary.CloudinaryImage(f'NotesApp/{current_user.username}')\
+    r = cloudinary.uploader.upload(file.file, public_id=f'ContactsApp/{current_user.username}', overwrite=True)
+    src_url = cloudinary.CloudinaryImage(f'ContactsApp/{current_user.username}')\
                         .build_url(width=250, height=250, crop='fill', version=r.get('version'))
     user = await repo_users.update_avatar(current_user.email, src_url, db)
     return user

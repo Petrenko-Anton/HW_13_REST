@@ -33,6 +33,7 @@ async def startup():
     await FastAPILimiter.init(r)
 
 
+
 @app.get("/")
 async def index():
     return {"msg": "Hello World"}
